@@ -60,7 +60,7 @@ class Game implements Observable
                 $this->notifyObservers($this->players[$key]->getName()."'s turn");
                 $this->players[$key]->addTurn();
 
-                $this->players[$key]->move($this->board);
+                $this->players[$key]->move($this->board, $this->turn);
                 if($this->checkStatus() === "finished") {
                     $finished = true;
                     break;

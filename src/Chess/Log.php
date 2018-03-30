@@ -65,7 +65,7 @@ class Log implements Observer
         foreach($this->logs["movements"] as $movement)
         {
             if($movement["status"] === "capture") {
-                $result[] = $movement["piece"]." (".Translation::toAlpha($movement["position_from"]).") captured ".$movement["piece_captured"]." (".Translation::toAlpha($movement["position_to"]).")";
+                $result[] = $movement["piece"]." (".Translation::toAlpha($movement["position_from"]).") captured ".$movement["piece_captured"]." (".Translation::toAlpha($movement["position_to"]).") on turn ".$movement["turn"];
             }
         }
         return $result;

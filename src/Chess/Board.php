@@ -54,7 +54,7 @@ class Board implements Observable
         }
     }
 
-    public function movePiece($from, $to)
+    public function movePiece($from, $to, $turn)
     {
         $this->notifyObservers("Moving from [".$from[0].", ".$from[1]."] to [".$to[0].",".$to[1]."]");
         $squareFrom = $this->getSquare($from);
@@ -63,13 +63,13 @@ class Board implements Observable
         $status = $this->verifyMovement($squareFrom->getPiece(), $to);
         $this->notifyObservers("Movement status: ".$status);
         if($status === 'valid') {
-            $this->notifyHistory($from, $to, $status);
+            $this->notifyHistory($from, $to, $status, $turn);
             $squareTo->addPiece($squareFrom->getPiece());
             $squareTo->getPiece()->setPosition($to);
             $squareFrom->clear();
         } elseif ($status === 'capture') {
             //capture the piece
-            $this->notifyHistory($from, $to, $status);
+            $this->notifyHistory($from, $to, $status, $turn);
             $squareTo->getPiece()->kill();
             $squareTo->addPiece($squareFrom->getPiece());
             $squareTo->getPiece()->setPosition($to);
@@ -175,7 +175,7 @@ class Board implements Observable
         return $positions;
     }
 
-    protected function notifyHistory($from, $to, $status)
+    protected function notifyHistory($from, $to, $status, $turn)
     {
         $squareFrom = $this->getSquare($from);
         $squareTo = $this->getSquare($to);
@@ -185,7 +185,8 @@ class Board implements Observable
             "position_to" => $to,
             "piece" => $squareFrom->getPiece()->getName(),
             "piece_captured" => '',
-            "status" => $status
+            "status" => $status,
+            "turn" => $turn
         ];
 
         if($status === 'capture') {

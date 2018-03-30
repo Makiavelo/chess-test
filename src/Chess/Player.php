@@ -16,12 +16,12 @@ class Player
         $this->name = $name;
     }
 
-    public function move(Board $board)
+    public function move(Board $board, $turn)
     {
         $moves = $board->getPossibleMoves($this->getColor());
         $move = $this->getStrategy()->move($moves, $board);
         $piece = $move["piece"];
-        $board->movePiece($piece->getPosition(), $move["move"]);
+        $board->movePiece($piece->getPosition(), $move["move"], $turn);
     }
 
     public function getName()
