@@ -1,0 +1,14 @@
+{
+    "name": "mak/chess_test",
+    "description": "Chess test",
+    "authors": [
+        {
+            "name": "Mak",
+            "email": "emanuel.bohnenkamp@gmail.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {"App\\": "src/"}
+    }
+}

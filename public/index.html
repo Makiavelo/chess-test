@@ -1,0 +1,91 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="js/chessboardjs/css/chessboard-0.3.0.css">
+        <link rel="stylesheet" href="js/chessboardjs/css/chessboard-0.3.0.css">
+        <script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+        <script type="text/javascript" src="js/chessboardjs/js/chessboard-0.3.0.min.js"></script>
+    </head>
+    <body>
+        <h1>Welcome to the chess test!</h1>
+        <div id="board" style="width: 400px"></div>
+        <input type="button" id="clear" value="Clear" />
+        <input type="button" id="start" value="Start" />
+        <ul id="results"></ul>
+        <ul id="moveList"></ul>
+
+        <script type="text/javascript">
+            var interval;
+            var counter;
+            $(document).ready(function(){
+              var cfg = {
+                draggable: true,
+                dropOffBoard: 'trash',
+                sparePieces: true
+              };
+              var board = ChessBoard('board', cfg);
+
+              $('#clear').on('click', function() {
+                clearInterval(interval);
+                board.clear();
+                $('#results').html('');
+                $('#moveList').html('');
+              });
+
+              $('#start').on('click', function() {
+                $.ajax({
+                  url: "/api.php",
+                  method: "POST",
+                  dataType: "json",
+                  data: {
+                    board: board.position()
+                  },
+                  success: function( result ) {
+                    console.log('got results!!', result);
+                    $('#moveList').html('<li><b>Movements list</b></li>');
+                    play(result);
+                    showResults(result);
+                  }
+                });
+              });
+
+              $('img').not('[data-piece=wN]').not('[data-piece=bB]').hide();
+
+              function play(result) {
+                counter = 0;
+                interval = setInterval( function() {
+                  move(result.movements[counter]);
+                  counter++;
+                  if(counter >= result.movements.length) {
+                    clearInterval(interval);
+                  }
+                }, 1000 );
+              }
+
+              function move(move) {
+                board.move(move);
+                var html = $('#moveList').html();
+                $('#moveList').html(html+'<li>'+move+'</li>');
+              }
+
+              function showResults(result) {
+                //console.log(result.report);
+                var html = '<li><h3>Game report</h3></li>'
+                html += '<li>movements: '+result.report.movements+'</li>';
+                html += '<li>turns: '+result.report.turns+'</li>';
+                html += '<li><ul><li><b>Game captures</b></li>';
+
+                if(result.report.kills.length > 0) {
+                  for(var i in result.report.kills) {
+                    html += '<li>'+result.report.kills[i]+'</li>';
+                  }
+                } else {
+                  html += '<li>None</li>';
+                }
+
+                html += '</ul></li>';
+                $('#results').html(html);
+              }
+            });
+        </script>
+    </body>
+</html>
